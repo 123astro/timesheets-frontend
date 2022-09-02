@@ -13,7 +13,6 @@ import { AuthContext } from "../Providers/AuthProvider";
 
 
 
-
 const CLIENT_ID = "1014030138797-88ms9kqc0t6jkslmrqa6ffh1b5h1bkga.apps.googleusercontent.com";
 const API_KEY = "AIzaSyCX2_pwjiZppDz4rXSiVTSq3-vDCJmeeMA";
 const SCOPES = "https://www.googleapis.com/auth/drive";
@@ -97,7 +96,9 @@ const Timer = () => {
         createFile('Start Brief')
         console.log("This start worked")
         getTimeString()
-        }
+        } else (
+            alert("Matter ID and Action name is needed. Please close google login")
+        )
     }
 
     function captureStopTime() {
@@ -106,8 +107,6 @@ const Timer = () => {
         myWindow.close();
 
     }
-
-
 
     const startTimer = async () => {
         console.log("timer started")
@@ -133,7 +132,7 @@ const Timer = () => {
         try {
             const res = await axios.post(`http://localhost:8080/api/action/stop`, data)
             setQuery({ matterId: "", actionName: "" })
-            //alert(res.data + " was successfully added!")
+            alert(res.data + " was successfully added!")
             console.log(res.data)
         } catch (error) {
             console.error(error.response ? error.reponse.data : error.message)
@@ -142,8 +141,9 @@ const Timer = () => {
 
     return (
         <Splash image={timerpic1} >
+            <div>
             <div style={{ marginTop: '10em' }}>
-                <BorderCard style={{
+                {/* <BorderCard style={{
                     backgroundColor: "black",
                     height: 1
                 }} >
@@ -157,8 +157,9 @@ const Timer = () => {
                     }}
                         onClick={stopTimer}>
                         Stop Timer
-                    </Button2>
-                </BorderCard>
+                    </Button2> */}
+                {/* </BorderCard> */}
+                </div>
                 <div style={{ marginTop: '20em' }}>
                     <InlineInputContainer style={{
                         height: 100
@@ -194,6 +195,7 @@ const Timer = () => {
                         </div>
                     </InlineInputContainer>
                 </div>
+           
             </div>
         </Splash>
     )
