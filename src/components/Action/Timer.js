@@ -19,6 +19,7 @@ const SCOPES = "https://www.googleapis.com/auth/drive";
 let myWindow;
 
 
+
 const Timer = () => {
     //  const login1 = new GoogleLogin();
     const [auth] = useContext(AuthContext)
@@ -98,14 +99,14 @@ const Timer = () => {
         getTimeString()
         } else (
             alert("Matter ID and Action name is needed. Please close google login")
+
         )
     }
 
     function captureStopTime() {
         stopTimer();
         getTimeString();
-        myWindow.close();
-
+        myWindow.window.close();
     }
 
     const startTimer = async () => {
@@ -122,10 +123,7 @@ const Timer = () => {
         }
     }
 
-
-
     const stopTimer = async () => {
-
         console.log("timer stopped")
         setSubmitting(true);
         const data = query;
@@ -195,7 +193,6 @@ const Timer = () => {
                         </div>
                     </InlineInputContainer>
                 </div>
-           
             </div>
         </Splash>
     )
