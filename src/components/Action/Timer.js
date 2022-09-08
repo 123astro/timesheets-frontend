@@ -15,7 +15,7 @@ import { AuthContext } from "../Providers/AuthProvider";
 
 const CLIENT_ID = "1014030138797-88ms9kqc0t6jkslmrqa6ffh1b5h1bkga.apps.googleusercontent.com";
 const API_KEY = "AIzaSyCX2_pwjiZppDz4rXSiVTSq3-vDCJmeeMA";
-const SCOPES = "https://www.googleapis.com/auth/drive";
+const SCOPES = "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/gmail.readonly";
 let myWindow;
 
 
@@ -71,7 +71,6 @@ const Timer = () => {
         var options = { hour: 'numeric', minute: '2-digit', second: '2-digit' }
         console.log(time.toLocaleTimeString('en-US', options))
         return time.toLocaleTimeString('en-US', options);
-
     }
 
     function createFile(tag) {
@@ -87,19 +86,37 @@ const Timer = () => {
             console.log(val.documentId)
             myWindow = window.open('https://docs.google.com/document/d/' + val.documentId + "/edit", "_blank");
         })
-
-
     }
-    function captureStartTime() {
-        if(query.matterId !== ""){
-        startTimer()
-        // login1.signIn()
-        createFile('Start Brief')
-        console.log("This start worked")
-        getTimeString()
-        } else (
-            alert("Matter ID and Action name is needed. Please close google login")
 
+    function createEmail() {
+        var accessToken = gapi.auth.getToken().access_token;
+        fetch('https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest', {
+            headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
+        }).then((res) => {
+            return res.json();
+        }).then(function (val) {
+            console.log(val)
+            myWindow = window.open('https://mail.google.com/mail/u/0/#compose');
+        })
+    }
+
+    function captureStartTime() {
+        if (query.matterId !== "") {
+            startTimer()
+            createFile('Action Started')
+            getTimeString()
+        } else (
+            alert("*********Matter ID and Action name are needed.*********")
+        )
+    }
+
+    function captureStartTimeEmail() {
+        if (query.matterId !== "") {
+            startTimer()
+            createEmail('Email Started')
+            getTimeString()
+        } else (
+            alert("*********Matter ID and Action name are needed.*********")
         )
     }
 
@@ -107,8 +124,17 @@ const Timer = () => {
         stopTimer();
         getTimeString();
         myWindow.window.close();
+        alert("Logged out of Google and Action closed.")
     }
 
+    function captureStopTimeEmail() {
+        stopTimer();
+        getTimeString();
+        myWindow.window.close();
+        alert("Logged out of Google and Action closed.")
+    }
+
+    //data base
     const startTimer = async () => {
         console.log("timer started")
         setSubmitting(true);
@@ -123,6 +149,7 @@ const Timer = () => {
         }
     }
 
+    //data base
     const stopTimer = async () => {
         console.log("timer stopped")
         setSubmitting(true);
@@ -140,39 +167,27 @@ const Timer = () => {
     return (
         <Splash image={timerpic1} >
             <div>
-            <div style={{ marginTop: '10em' }}>
-                {/* <BorderCard style={{
-                    backgroundColor: "black",
-                    height: 1
-                }} >
-                    <Button2 style={{
-                        backgroundColor: "beige",
-                    }} onClick={startTimer}>
-                        Start Timer
-                    </Button2>
-                    <Button2 style={{
-                        backgroundColor: "beige"
-                    }}
-                        onClick={stopTimer}>
-                        Stop Timer
-                    </Button2> */}
-                {/* </BorderCard> */}
+                <div style={{ marginTop: '10em' }}>
                 </div>
                 <div style={{ marginTop: '20em' }}>
                     <InlineInputContainer style={{
                         height: 100
                     }}>
-                        <GoogleLogin> <button onClick={() => captureStartTime()} style={{
-                            height: 25,
-                            borderColor: "beige",
-                            borderWidth: 5
-                        }}> Start Brief </button>
+                        <GoogleLogin>
                         </GoogleLogin>
+                        <button onClick={() => captureStartTime()} style={{
+                            height: 42,
+                            borderColor: "beige",
+                            borderColor: "black",
+                            borderWidth: 1
+                        }}> Start Brief </button>
+
                         <GoogleLogout>
                             <button style={{
-                                height: 25,
+                                height: 18,
                                 borderColor: "beige",
-                                borderWidth: 5
+                                borderWidth: 1,
+                                borderColor: "black",
                             }} onClick={() => captureStopTime()} > End Brief </button>
                         </GoogleLogout>
                         <div>
@@ -192,6 +207,33 @@ const Timer = () => {
                             />
                         </div>
                     </InlineInputContainer>
+                    <BorderCard style={{
+                        border: "blue",
+                        borderRadius: 5,
+                        margin: '100px',
+                        padding: '10px',
+                        width: "40%",
+                        maxWidth: 1000,
+                        backgroundColor: "rgba(52, 52, 52, 0.8)",
+                        boxShadow: '1px 1px 20px rgba(91, 91, 91, 0.5)'
+                    }}>
+                        <button onClick={() => captureStartTimeEmail()} style={{
+                            height: 42,
+                            borderColor: "beige",
+                            borderColor: "black",
+                            borderWidth: 1,
+                            margin: 50,
+                        }}> Start Email </button>
+                        <button style={{
+                            //display: "flex",
+                            height: 42,
+                            borderColor: "beige",
+                            borderWidth: 1,
+                            borderColor: "black",
+                            margin: 50,
+
+                        }} onClick={() => captureStopTimeEmail()} > Close Email </button>
+                    </BorderCard>
                 </div>
             </div>
         </Splash>
